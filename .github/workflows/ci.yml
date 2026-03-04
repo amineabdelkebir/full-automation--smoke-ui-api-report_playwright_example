@@ -43,6 +43,8 @@ jobs:
 
       - name: Notify Slack
         if: always()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         run: |
           STATUS="${{ job.status }}"
           if [ "$STATUS" = "success" ]; then
@@ -51,6 +53,8 @@ jobs:
             MESSAGE="❌ Playwright Smoke Tests FAILED"
           fi
 
-          curl -X POST -H 'Content-type: application/json' \
+          echo "Webhook is set: $SLACK_WEBHOOK"
+
+          curl -X POST -H "Content-type: application/json" \
           --data "{\"text\":\"$MESSAGE\"}" \
-          ${{ secrets.SLACK_WEBHOOK }}
+          "$SLACK_WEBHOOK"
